@@ -1,0 +1,18 @@
+AppBundle\Entity\Client:
+    properties:
+        redirectUris:
+            - NotBlank:
+                groups: [ROLE_CLIENTS_ADD, ROLE_CLIENTS_EDIT]
+                message: "redirect_uri should not be blank"
+        name:
+            - NotBlank:
+                groups: [ROLE_CLIENTS_ADD, ROLE_CLIENTS_EDIT]
+                message: "name should not be blank"
+        defaultEmail:
+            - NotBlank:
+                groups: [ROLE_CLIENTS_ADD, ROLE_CLIENTS_EDIT]
+                message: "default_email should not be blank"
+        passwordResetUrl:
+            - NotBlank:
+                groups: [ROLE_CLIENTS_ADD, ROLE_CLIENTS_EDIT]
+                message: "password_reset_url should not be blank"

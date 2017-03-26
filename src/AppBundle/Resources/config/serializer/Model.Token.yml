@@ -1,0 +1,17 @@
+FOS\OAuthServerBundle\Model\Token:
+  exclusion_policy: all
+  properties:
+    scope:
+          accessor:
+              getter: getScope
+          serialized_name: scope
+          type: string
+          groups: [token_introspect_all, token]
+          expose: true
+    expiresAt:
+          accessor:
+              getter: getExpiresAt
+          serialized_name: exp
+          type: integer
+          groups: [token_introspect_all, token]
+          expose: true

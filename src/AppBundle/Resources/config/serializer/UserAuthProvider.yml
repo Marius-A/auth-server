@@ -1,0 +1,71 @@
+AppBundle\Entity\UserAuthProvider:
+  exclusion_policy: all
+  properties:
+      id:
+          accessor:
+              getter: getId
+          serialized_name: id
+          groups: [ROLE_USER_AUTH_PROVIDER_VIEW]
+          type: integer
+          expose: true
+      active:
+          accessor:
+              getter: isActive
+          serialized_name: active
+          groups: [ROLE_USER_AUTH_PROVIDER_VIEW]
+          type: boolean
+          expose: true
+      idSetAlias:
+          accesor:
+              setter: setId
+          serialized_name: id
+          groups: [GROUP_USER_PASSWORD_CHANGE]
+          type: integer
+          expose: true
+      newPassword:
+          accessor:
+              setter: setNewPassword
+          serialized_name: password
+          groups: [GROUP_USER_PASSWORD_CHANGE]
+          type: string
+          expose: true
+      confirmPassword:
+          accessor:
+              setter: setConfirmPassword
+          serialized_name: confirm_password
+          groups: [GROUP_USER_PASSWORD_CHANGE]
+          type: string
+          expose: true
+      oldPasswordAliasPasswordChange:
+          accessor:
+              setter: setOldPasswordAliasPasswordChange
+          serialized_name: old_password
+          groups: [GROUP_USER_PASSWORD_CHANGE, GROUP_OLD_PASSWORD]
+          type: string
+          expose: true
+      encoderName:
+          accessor:
+              setter: setEncoderName
+          serialized_name: encoder_name
+          groups: [GROUP_USER_PASSWORD_CHANGE]
+          type: string
+          expose: true
+      user:
+          accessor:
+              setter: setUser
+          serialized_name: user_id
+          groups: [ROLE_USER_AUTH_PROVIDER_ADD]
+          expose: true
+      authProvider:
+          accessor:
+              setter: setAuthProvider
+          serialized_name: auth_provider_id
+          groups: [ROLE_USER_AUTH_PROVIDER_ADD]
+          expose: true
+      identifierAliasUserAuthProviderAdd:
+          accessor:
+              setter: setIdentifierAliasUserAuthProviderAdd
+          serialized_name: identifier
+          type: string
+          groups: [ROLE_USER_AUTH_PROVIDER_ADD]
+          expose: true

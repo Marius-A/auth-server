@@ -1,0 +1,10 @@
+AppBundle\OpenID\Encryption\JwkContainer:
+  exclusion_policy: all
+  properties:
+      keys:
+          accessor:
+              getter: getKeys
+          serialized_name: keys
+          groups: [jwk_list]
+          expose: true
+          type: array

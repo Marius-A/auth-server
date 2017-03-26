@@ -1,0 +1,72 @@
+AppBundle\Entity\User:
+  exclusion_policy: all
+  properties:
+      id:
+          accessor:
+              getter: getId
+          serialized_name: user_id
+          groups: [token_introspect_all]
+          expose: true
+      idAliasMe:
+          accessor:
+              getter: getId
+          serialized_name: id
+          groups: [ROLE_USER_ME, ROLE_USER_VIEW, ROLE_USERS_LIST]
+          type: integer
+          expose: true
+      username:
+          accessor:
+              getter: getUsername
+          serialized_name: username
+          groups: [ROLE_USER_ME, ROLE_USER_VIEW, ROLE_USERS_LIST]
+          type: string
+          expose: true
+      email:
+          accessor:
+              getter: getEmail
+          serialized_name: email
+          groups: [ROLE_USER_ME, ROLE_USER_VIEW, ROLE_USERS_LIST]
+          type: string
+          expose: true
+      name:
+          accessor:
+              getter: getName
+          serialized_name: name
+          groups: []
+          type: string
+          expose: true
+      idSetAlias:
+          accessor:
+              setter: setId
+          serialized_name: id
+          groups: [ROLE_USERS_ADD, ROLE_USERS_EDIT]
+          type: integer
+          expose: true
+      emailSetAlias:
+          accessor:
+              setter: setEmail
+          serialized_name: email
+          groups: [ROLE_USERS_ADD, ROLE_USERS_EDIT]
+          type: string
+          expose: true
+      usernameSetAlias:
+          accessor:
+              setter: setUsername
+          serialized_name: username
+          groups: [ROLE_USERS_ADD, ROLE_USERS_EDIT]
+          type: string
+          expose: true
+      status:
+          accessor:
+              setter: setStatus
+          serialized_name: status
+          groups: [ROLE_USERS_ADD, ROLE_USERS_EDIT]
+          type: integer
+          expose: true
+      requestingClientId:
+          accessor:
+              setter: setRequestingClientId
+          serialized_name: requesting_client_id
+          groups: [ROLE_USERS_ADD, ROLE_USERS_EDIT]
+          type: integer
+          expose: true

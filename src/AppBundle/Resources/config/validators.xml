@@ -1,0 +1,18 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+    <parameters>
+        <parameter key="app_bundle.controller.validator.order.class">AppBundle\Controller\Validator\OrderValidator</parameter>
+        <parameter key="app_bundle.controller.validator.param.class">AppBundle\Controller\Validator\ParamValidator</parameter>
+        <parameter key="app_bundle.controller.validator.role.class">AppBundle\Controller\Validator\RoleValidator</parameter>
+    </parameters>
+
+    <services>
+        <service id="app_bundle.controller.validator.role" class="%app_bundle.controller.validator.role.class%" shared="false">
+            <tag name="validator.constraint_validator" alias="app_bundle.controller.validator.role"/>
+        </service>
+    </services>
+</container>
+

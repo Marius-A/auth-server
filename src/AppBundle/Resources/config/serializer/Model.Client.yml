@@ -1,0 +1,18 @@
+FOS\OAuthServerBundle\Model\Client:
+  exclusion_policy: all
+  properties:
+    randomId:
+        expose: true
+        type: string
+        serialized_name: random_id
+        groups: [role_client_get,role_client_list]
+    redirectUris:
+        expose: true
+        type: array
+        serialized_name: redirect_uris
+        groups: [role_client_get,role_client_list,ROLE_CLIENTS_ADD,ROLE_CLIENTS_EDIT]
+    allowedGrantTypes:
+        expose: true
+        type: array
+        serialized_name: allowed_grant_types
+        groups: [role_client_get,role_client_list,ROLE_CLIENTS_ADD,ROLE_CLIENTS_EDIT]

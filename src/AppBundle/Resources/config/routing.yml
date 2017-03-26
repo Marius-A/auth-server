@@ -1,0 +1,47 @@
+home:
+    resource: AppBundle\Controller\HomeController
+    type:     annotation
+clients:
+    resource: AppBundle\Controller\ClientController
+    type: rest
+
+clientRole:
+    resource: AppBundle\Controller\ClientRoleController
+    type: rest
+
+clientRequiredRole:
+    resource: AppBundle\Controller\ClientRequiredRoleController
+    type: rest
+
+users:
+    resource: AppBundle\Controller\UserController
+    type: rest
+
+userAuthProvider:
+    resource: AppBundle\Controller\UserAuthProviderController
+    type: rest
+
+userRole:
+    resource: AppBundle\Controller\UserRoleController
+    type: rest
+
+userRoleTemplate:
+    resource: AppBundle\Controller\UserRoleTemplateController
+    type: rest
+
+token:
+    resource: AppBundle\Controller\TokenController
+    type: rest
+
+jwk:
+    resource: AppBundle\Controller\JwkController
+    type: rest
+
+roles:
+    resource: AppBundle\Controller\RoleController
+    type: rest
+
+
+NelmioApiDocBundle:
+    resource: "@NelmioApiDocBundle/Resources/config/routing.yml"
+    prefix:   /api/doc
