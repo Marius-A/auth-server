@@ -1,0 +1,10 @@
+<?php
+
+namespace AppBundle\OpenID\Encryption;
+
+interface EncryptionInterface
+{
+    public function encode($payload, $key, $algorithm = null);
+    
+    public function decode($payload, $key, $algorithm = null);
+}
