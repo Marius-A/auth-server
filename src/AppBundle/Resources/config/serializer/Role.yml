@@ -1,0 +1,27 @@
+AppBundle\Entity\Role:
+  exclusion_policy: all
+  properties:
+      id:
+          accessor:
+              getter: getId
+          serialized_name: id
+          groups: [ROLE_ROLES_LIST, ROLE_ROLES_VIEW, ROLE_USER_ROLES_LIST, ROLE_CLIENT_ROLES_LIST]
+          expose: true
+      role:
+          accessor:
+              getter: getRole
+          serialized_name: role
+          groups: [ROLE_ROLES_LIST, ROLE_ROLES_VIEW, ROLE_USER_ROLES_LIST, ROLE_CLIENT_ROLES_LIST]
+          expose: true
+      name:
+          accessor:
+              getter: getName
+          serialized_name: name
+          groups: [ROLE_ROLES_LIST, ROLE_ROLES_VIEW, ROLE_USER_ROLES_LIST, ROLE_CLIENT_ROLES_LIST]
+          expose: true
+      parentIdAlias:
+          accessor:
+              getter: getParentId
+          serialized_name: parent_id
+          groups: [ROLE_ROLES_LIST, ROLE_ROLES_VIEW, ROLE_USER_ROLES_LIST, ROLE_CLIENT_ROLES_LIST]
+          expose: true

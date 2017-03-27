@@ -1,0 +1,26 @@
+AppBundle\Entity\AccessToken:
+  exclusion_policy: all
+  properties:
+      active:
+          accessor:
+              getter: isActive
+          serialized_name: active
+          type: boolean
+          groups: [token_introspect_active, token_introspect_all]
+          expose: true
+      client:
+          accessor:
+              getter: getClient
+          serialized_name: client_id
+          type: AppBundle\Entity\Client
+          inline: true
+          groups: [token_introspect_all]
+          expose: true
+      user:
+          accessor:
+              getter: getUser
+          serialized_name: user_id
+          type: AppBundle\Entity\User
+          inline: true
+          groups: [token_introspect_all]
+          expose: true

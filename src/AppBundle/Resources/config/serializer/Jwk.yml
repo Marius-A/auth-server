@@ -1,0 +1,38 @@
+AppBundle\OpenID\Encryption\Jwk:
+  exclusion_policy: all
+  properties:
+      kid:
+          accessor:
+              getter: getKid
+          serialized_name: kid
+          groups: [jwk_list]
+          expose: true
+          type: string
+      kty:
+          accessor:
+              getter: getKty
+          serialized_name: kty
+          groups: [jwk_list]
+          expose: true
+          type: string
+      alg:
+          accessor:
+              getter: getAlg
+          serialized_name: alg
+          groups: [jwk_list]
+          expose: true
+          type: string
+      n:
+          accessor:
+              getter: getN
+          serialized_name: n
+          groups: [jwk_list]
+          expose: true
+          type: string
+      e:
+          accessor:
+              getter: getE
+          serialized_name: e
+          groups: [jwk_list]
+          expose: true
+          type: string

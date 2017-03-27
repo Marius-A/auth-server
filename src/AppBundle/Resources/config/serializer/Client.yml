@@ -1,0 +1,79 @@
+AppBundle\Entity\Client:
+  exclusion_policy: all
+  properties:
+      idIntrospectAlias:
+          accessor:
+              getter: getId
+          serialized_name: client_id
+          groups: [token_introspect_all]
+          expose: true
+          type: integer
+      id:
+          accessor:
+              getter: getId
+              setter: setId
+          serialized_name: id
+          groups: [ROLE_CLIENTS_LIST, ROLE_CLIENT_VIEW, ROLE_CLIENTS_EDIT]
+          expose: true
+      created:
+          expose: true
+          groups: [role_client_get, ROLE_CLIENTS_LIST, ROLE_CLIENT_VIEW]
+      modified:
+          expose: true
+          groups: [role_client_get, ROLE_CLIENTS_LIST, ROLE_CLIENT_VIEW]
+      name:
+          accessor:
+              getter: getName
+              setter: setName
+          serialized_name: name
+          groups: [ROLE_CLIENTS_LIST, role_client_get, ROLE_CLIENTS_EDIT, ROLE_CLIENTS_ADD, ROLE_CLIENT_VIEW]
+          expose: true
+      defaultEmail:
+          expose: true
+          serialized_name: default_email
+          groups: [ROLE_CLIENT_VIEW, ROLE_CLIENTS_LIST, ROLE_CLIENTS_EDIT, ROLE_CLIENTS_ADD, ROLE_CLIENT_VIEW]
+      passwordResetUrl:
+          expose: true
+          serialized_name: password_reset_url
+          groups: [ROLE_CLIENT_VIEW, ROLE_CLIENTS_LIST, ROLE_CLIENTS_EDIT, ROLE_CLIENTS_ADD, ROLE_CLIENT_VIEW]
+      secretAlias:
+          accessor:
+              getter: getSecret
+          serialized_name: secret
+          groups: [ROLE_CLIENTS_LIST, ROLE_CLIENT_VIEW]
+          expose: true
+      status:
+          accessor:
+              getter: getStatus
+          serialized_name: status
+          groups: [ROLE_CLIENTS_LIST, ROLE_CLIENT_VIEW]
+          expose: true
+      randomIdAlias:
+          accessor:
+              getter: getRandomId
+          serialized_name: random_id
+          groups: [ROLE_CLIENTS_LIST, ROLE_CLIENT_VIEW]
+          expose: true
+      allowedGrantTypesAlias:
+          accessor:
+              getter: getAllowedGrantTypes
+              setter: setAllowedGrantTypes
+          serialized_name: allowed_grant_types
+          groups: [ROLE_CLIENT_VIEW, ROLE_CLIENTS_EDIT, ROLE_CLIENTS_ADD]
+          type: array
+          expose: true
+      redirectUrisAlias:
+          accessor:
+              getter: getRedirectUris
+              setter: setRedirectUris
+          serialized_name: redirect_uris
+          groups: [ROLE_CLIENT_VIEW, ROLE_CLIENTS_EDIT, ROLE_CLIENTS_ADD]
+          type: array
+          expose: true
+      defaultEncoder:
+          accessor:
+              getter: getDefaultEncoder
+              setter: setDefaultEncoder
+          serialized_name: encoder
+          groups: [ROLE_CLIENT_VIEW, ROLE_CLIENTS_EDIT, ROLE_CLIENTS_ADD]
+          expose: true

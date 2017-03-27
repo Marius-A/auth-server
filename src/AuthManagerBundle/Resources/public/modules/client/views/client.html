@@ -1,0 +1,154 @@
+<div class="container" ng-controller="ClientController">
+
+    <div class="starter-template">
+        <div class="container">
+            <div class="navbar-form">
+                <button type="submit" class="btn btn-default" ng-click="addClient()" data-toggle="modal" data-target="#clientModal" onclick="return false;">New Client</button>
+                <div class="form-group">
+                    <input type="search" placeholder="Client Search" class="form-control" ng-model="clientNameSearch">
+                </div>
+                <button type="submit" id="search" class="btn btn-success" ng-click="clientSearch()" onclick="return false;">Search</button>
+            </div>
+        </form>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Client Name</th>
+                    <th>Client ID</th>
+                    <th>Client Secret</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="client in clients" ng-class="{danger: !client.status}">
+                    <td>{{ client.name }}</td>
+                    <td>{{ client.id }}_{{ client.random_id }}</td>
+                    <td>{{ client.secret }}</td>
+                    <td>
+                        <div class="dropdown">
+                            <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                Actions
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                                <li><a href="" data-toggle="modal" data-target="#clientModal" ng-click="cloneClient(client.id)">Clone</a></li>
+                                <li ng-show="client.status"><a href="" data-toggle="modal" data-target="#clientModal" ng-click="editClient(client.id)">Edit</a></li>
+                                <li ng-show="client.status"><a href="" data-toggle="modal" data-target="#removeClientModal" ng-click="removeClient(client.id)">Remove</a></li>
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="well well-sm list-more" ng-show="showMoreClients">
+            <a href="" ng-click="getClients()">Show More!</a>
+        </div>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="clientModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document" style="width: 800px;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">{{ clientModal }}</h4>
+                </div>
+                <div class="modal-body">
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li role="presentation" class="active"><a href="" data-target="#general-tab" aria-controls="general" role="tab" data-toggle="tab">General</a></li>
+                        <li role="presentation"><a href="" data-target="#roles-tab" aria-controls="roles" role="tab" data-toggle="tab">Roles</a></li>
+                        <li role="presentation"><a href="" data-target="#required-roles-tab" aria-controls="required-roles" role="tab" data-toggle="tab">Required Roles</a></li>
+                    </ul>
+                    <div class="tab-content">
+                        <div role="tabpanel" class="tab-pane active" id="general-tab">
+                            <div class="panel panel-default" style="height: 600px;">
+                                <div class="panel-heading">
+                                    <h3 class="panel-title">Set client's general information</h3>
+                                </div>
+                                <div class="panel-body">
+                                    <div ng-show="client.errors" class="alert alert-danger" role="alert">
+                                        <ul>
+                                            <li ng-repeat="error in client.errors">{{ error }}</li>
+                                        </ul>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="name">Client Name</label>
+                                        <input type="text" class="form-control" id="name" placeholder="Client Name" ng-model="client.name" required />
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="email">Client's Default Email</label>
+                                        <input type="email" class="form-control" id="email" placeholder="Client's Default Email" ng-model="client.default_email" required />
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="password-reset-url">Password Reset Url</label>
+                                        <input type="text" class="form-control" id="password-reset-url" placeholder="Password Reset Url" ng-model="client.password_reset_url" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="allowed-grant-types">Allowed Grant Types</label>
+                                        <ul id="allowed-grant-types"></ul>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="redirect-uris">Redirect URI's</label>
+                                        <ul id="redirect-uris"></ul>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="encoder">Encoder</label>
+                                        <select id="encoder" class="form-control" ng-model="client.encoder">
+                                            <option value="">No encoder</option>
+                                            <option value="main">MAIN</option>
+                                            <option value="bycript">BYCRIPT</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div role="tabpanel" class="tab-pane" id="roles-tab">
+                            <div class="panel panel-default" style="height: 500px;overflow: scroll;">
+                                <div class="panel-heading">
+                                    <h3 class="panel-title">Select the roles the client will be using</h3>
+                                </div>
+                                <div class="panel-body" id="roles-container">
+                                    <div id="roles"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div role="tabpanel" class="tab-pane" id="required-roles-tab">
+                            <div class="panel panel-default" style="height: 500px;overflow: scroll;">
+                                <div class="panel-heading">
+                                    <h3 class="panel-title">Select the roles the client will require</h3>
+                                </div>
+                                <div class="panel-body"  id="required-roles-container">
+                                    <div id="required-roles"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" ng-click="saveClient()">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="removeClientModal" tabindex="-1" role="dialog" aria-labelledby="removeClientModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="removeClientModalLabel">{{ clientRemoveModal }}</h4>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure to remove client: <b>"{{ client.name }}"</b>?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-danger" ng-click="removeClientAction(client.id)" data-dismiss="modal">Delete {{ client.name }}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div><!-- /.container -->

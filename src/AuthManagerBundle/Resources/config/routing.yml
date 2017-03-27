@@ -1,0 +1,16 @@
+managerApp:
+    path: /manager
+    defaults: { _controller: AuthManagerBundle:Manager:index }
+
+managerConfig:
+    path: /manager/config.js
+    defaults: { _controller: AuthManagerBundle:Manager:config }
+
+managerLogin:
+    path: /manager-login
+    defaults: { _controller: AuthManagerBundle:Manager:login }
+    methods: ['POST']
+
+#managerProxy:
+#    path: /manager-proxy
+#    defaults: { _controller: AuthManagerBundle:Proxy:index }

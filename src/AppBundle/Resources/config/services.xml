@@ -1,0 +1,383 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <service id="fos_oauth_server.security.authentication.listener" class="AppBundle\Security\Firewall\OAuthListener">
+            <argument type="service" id="security.token_storage"/>
+            <argument type="service" id="security.authentication.manager" />
+            <argument type="service" id="fos_oauth_server.server" />
+            <call method="setKeyPairAdapter">
+                <argument type="service" id="openid.storage.keypair_parameter.adapter"/>
+            </call>
+        </service>
+
+        <service id="fos_oauth_server.storage.default" class="AppBundle\Service\OAuthStorageService" public="false">
+            <argument type="service" id="fos_oauth_server.client_manager" />
+            <argument type="service" id="fos_oauth_server.access_token_manager" />
+            <argument type="service" id="fos_oauth_server.refresh_token_manager" />
+            <argument type="service" id="fos_oauth_server.auth_code_manager" />
+            <argument type="service" id="app_bundle.security.user.provider" on-invalid="null" />
+            <argument type="service" id="security.encoder_factory" />
+
+            <call method="setKeyPairAdapter">
+                <argument type="service" id="openid.storage.keypair_parameter.adapter"/>
+            </call>
+            <call method="setEventDispatcher">
+                <argument type="service" id="event_dispatcher"/>
+            </call>
+        </service>
+
+        <service id="openid.storage.keypair_parameter.adapter" class="AppBundle\OpenID\Storage\KeyPairParameterAdapter">
+            <call method="setEncryptionAlgorithm">
+                <argument>%jwt.alg%</argument>
+            </call>
+            <call method="setCertificate">
+                <argument>%jwt.cert%</argument>
+            </call>
+            <call method="setPrivateKey">
+                <argument>%jwt.prv_key%</argument>
+            </call>
+        </service>
+
+        <service id="openid.storage.user_claims_doctrine.adapter" class="AppBundle\OpenID\Storage\UserClaimsDoctrineAdapter">
+            <call method="setDoctrine">
+                <argument type="service" id="doctrine"/>
+            </call>
+        </service>
+
+        <service id="serializer.service" class="AppBundle\Service\SerializerService">
+            <call method="setJmsSerializer">
+                <argument type="service" id="jms_serializer" />
+            </call>
+        </service>
+
+        <service id="client.handler" class="AppBundle\Handler\ClientHandler">
+            <argument type="service" id="serializer.service" />
+            <argument type="service" id="doctrine" />
+            <call method="setValidator">
+                <argument type="service" id="validator"/>
+            </call>
+            <call method="setFilterService">
+                <argument type="service" id="filter.service"/>
+            </call>
+            <call method="setClientService">
+                <argument type="service" id="client.service"/>
+            </call>
+        </service>
+
+        <service id="client_role.handler" class="AppBundle\Handler\ClientRoleHandler">
+            <call method="setDoctrine">
+                <argument type="service" id="doctrine" />
+            </call>
+            <call method="setServer">
+                <argument type="service" id="fos_oauth_server.server"/>
+            </call>
+            <call method="setClientHandler">
+                <argument type="service" id="client.handler" />
+            </call>
+            <call method="setRoleHandler">
+                <argument type="service" id="role.handler" />
+            </call>
+            <call method="setClientService">
+                <argument type="service" id="client.service" />
+            </call>
+        </service>
+
+        <service id="client_required_role.handler" class="AppBundle\Handler\ClientRequiredRoleHandler">
+            <call method="setDoctrine">
+                <argument type="service" id="doctrine" />
+            </call>
+            <call method="setServer">
+                <argument type="service" id="fos_oauth_server.server"/>
+            </call>
+            <call method="setClientHandler">
+                <argument type="service" id="client.handler" />
+            </call>
+            <call method="setRoleHandler">
+                <argument type="service" id="role.handler" />
+            </call>
+            <call method="setClientService">
+                <argument type="service" id="client.service" />
+            </call>
+        </service>
+
+        <service id="user_role.handler" class="AppBundle\Handler\UserRoleHandler">
+            <call method="setDoctrine">
+                <argument type="service" id="doctrine" />
+            </call>
+            <call method="setServer">
+                <argument type="service" id="fos_oauth_server.server"/>
+            </call>
+            <call method="setUserService">
+                <argument type="service" id="user.service"/>
+            </call>
+            <call method="setClientService">
+                <argument type="service" id="client.service"/>
+            </call>
+            <call method="setUserHandler">
+                <argument type="service" id="user.handler"/>
+            </call>
+            <call method="setRoleHandler">
+                <argument type="service" id="role.handler"/>
+            </call>
+        </service>
+
+        <service id="user.handler" class="AppBundle\Handler\UserHandler">
+            <argument type="service" id="serializer.service" />
+            <argument type="service" id="doctrine" />
+            <call method="setSecurityEncoderFactory" >
+                <argument type="service" id="security.encoder_factory" />
+            </call>
+            <call method="setValidator">
+                <argument type="service" id="validator" />
+            </call>
+            <call method="setUserService">
+                <argument type="service" id="user.service"/>
+            </call>
+            <call method="setUserFilterService">
+                <argument type="service" id="user_filter.service"/>
+            </call>
+        </service>
+
+        <service id="user_role_template.handler" class="AppBundle\Handler\UserRoleTemplateHandler">
+            <argument type="service" id="doctrine" />
+            <call method="setUserService">
+                <argument type="service" id="user.service"/>
+            </call>
+        </service>
+
+        <service id="auth_provider.handler" class="AppBundle\Handler\AuthProviderHandler">
+            <argument type="service" id="doctrine" />
+        </service>
+
+        <service id="role.handler" class="AppBundle\Handler\RoleHandler">
+            <argument type="service" id="serializer.service" />
+            <argument type="service" id="doctrine" />
+        </service>
+
+        <service id="user_auth_provider.handler" class="AppBundle\Handler\UserAuthProviderHandler">
+            <call method="setDoctrine">
+                <argument type="service" id="doctrine"/>
+            </call>
+            <call method="setSerializer">
+                <argument type="service" id="serializer"/>
+            </call>
+            <call method="setUserAuthProviderService">
+                <argument type="service" id="user_auth_provider.service"/>
+            </call>
+            <call method="setUserHandler">
+                <argument type="service" id="user.handler"/>
+            </call>
+            <call method="setAuthProviderHandler">
+                <argument type="service" id="auth_provider.handler"/>
+            </call>
+        </service>
+
+        <service id="app_bundle.security.user.provider"
+                 class="AppBundle\Security\User\UserProvider">
+            <call method="setDoctrine">
+                <argument type="service" id="doctrine"/>
+            </call>
+        </service>
+
+        <service id="app_bundle.oauth.switch_user_grant_extension"
+                class="AppBundle\Security\GrantExtension\SwitchUserGrantExtension">
+            <argument type="service" id="app_bundle.security.user.provider"/>
+            <argument type="service" id="service_container"/>
+            <tag name="fos_oauth_server.grant_extension" uri="qw"/>
+        </service>
+
+        <service id="fos_oauth_server.server" class="AppBundle\Server\OAuth2">
+            <argument type="service" id="fos_oauth_server.storage" />
+            <argument>%fos_oauth_server.server.options%</argument>
+            <call method="setClientService">
+                <argument type="service" id="client.service"/>
+            </call>
+            <call method="setUserService">
+                <argument type="service" id="user.service"/>
+            </call>
+            <call method="setKeyPairAdapter">
+                <argument type="service" id="openid.storage.keypair_parameter.adapter"/>
+            </call>
+            <call method="setUserClaimsAdapter">
+                <argument type="service" id="openid.storage.user_claims_doctrine.adapter"/>
+            </call>
+        </service>
+
+        <service id="doctrine.event_listener" class="AppBundle\Event\Listener\DoctrineListener">
+            <tag name="doctrine.event_listener" event="onFlush" />
+            <tag name="doctrine.event_listener" event="postFlush" />
+            <call method="setUserListener">
+                <argument type="service" id="doctrine.user_listener"/>
+            </call>
+            <call method="setFlushedEntityManager">
+                <argument type="service" id="flushed_entity_manager.service"/>
+            </call>
+        </service>
+
+        <service id="doctrine.user_listener" class="AppBundle\Entity\Listener\UserListener">
+            <tag name="doctrine.orm.entity_listener" />
+            <tag name="doctrine.orm.entity_listener" entity_manager="auth" />
+            <call method="setDoctrine">
+                <argument type="service" id="doctrine"/>
+            </call>
+            <call method="setEncoderFactory">
+                <argument type="service" id="security.encoder_factory"/>
+            </call>
+            <call method="setFlushedEntityManager">
+                <argument type="service" id="flushed_entity_manager.service"/>
+            </call>
+        </service>
+
+        <service id="client.service" class="AppBundle\Service\ClientService">
+            <call method="setDoctrine">
+                <argument type="service" id="doctrine"/>
+            </call>
+            <call method="setValidator">
+                <argument type="service" id="validator"/>
+            </call>
+        </service>
+
+        <service id="role.service" class="AppBundle\Service\RoleService">
+            <call method="setDoctrine">
+                <argument type="service" id="doctrine"/>
+            </call>
+            <call method="setValidator">
+                <argument type="service" id="validator"/>
+            </call>
+        </service>
+
+        <service id="user.service" class="AppBundle\Service\UserService">
+            <call method="setDoctrine">
+                <argument type="service" id="doctrine"/>
+            </call>
+            <call method="setEncoderFactory">
+                <argument type="service" id="security.encoder_factory"/>
+            </call>
+            <call method="setValidator">
+                <argument type="service" id="validator"/>
+            </call>
+            <call method="setEntityService">
+                <argument type="service" id="entity.service"/>
+            </call>
+            <call method="setEventDispatcher">
+                <argument type="service" id="event_dispatcher"/>
+            </call>
+        </service>
+
+        <service id="jms_serializer.object_constructor" alias="jms_serializer.doctrine_object_constructor" public="false"/>
+
+        <service id="email.service" class="AppBundle\Service\EmailService">
+
+            <call method="setValidator">
+                <argument type="service" id="swiftmailer.mailer"/>
+            </call>
+            <call method="setTwig">
+                <argument type="service" id="twig"/>
+            </call>
+            <call method="setValidator">
+                <argument type="service" id="validator"/>
+            </call>
+        </service>
+
+        <service id="filter.service" class="AppBundle\Service\FilterService">
+            <call method="setJmsMetadataFactory">
+                <argument type="service" id="jms_serializer.metadata_factory"/>
+            </call>
+        </service>
+
+        <service id="user_filter.service" class="AppBundle\Service\UserFilterService" parent="filter.service">
+
+        </service>
+
+        <service id="event.subscriber.user_auth_provider" class="AppBundle\Event\Subscriber\UserAuthProviderSerializeSubscriber">
+            <tag name="jms_serializer.event_subscriber"/>
+            <call method="setEncoderFactory">
+                <argument type="service" id="security.encoder_factory"/>
+            </call>
+            <call method="setUserAuthProviderService">
+                <argument type="service" id="user.service"/>
+            </call>
+            <call method="setDoctrine">
+                <argument type="service" id="doctrine"/>
+            </call>
+        </service>
+
+        <service id="user_auth_provider.service" class="AppBundle\Service\UserAuthProviderService">
+            <call method="setDoctrine">
+                <argument type="service" id="doctrine"/>
+            </call>
+            <call method="setValidator">
+                <argument type="service" id="validator"/>
+            </call>
+        </service>
+
+        <service id="user_auth_provider_identifier.service" class="AppBundle\Service\UserAuthProviderIdentifierService">
+            <call method="setDoctrine">
+                <argument type="service" id="doctrine"/>
+            </call>
+        </service>
+
+        <service id="fos_rest.request.param_fetcher" class="AppBundle\Service\ParamFetcherService">
+            <argument type="service" id="service_container" />
+            <argument type="service" id="fos_rest.request.param_fetcher.reader"/>
+            <argument type="service" id="request_stack"/>
+            <argument type="service" id="validator" on-invalid="null"/>
+        </service>
+
+        <service id="main.security.encoder" class="AppBundle\Security\Encoder\MainPasswordEncoder" />
+
+        <service id="user_auth_provider.old_password.validator" class="AppBundle\Validator\Entity\UserAuthProvider\OldPasswordValidator">
+            <call method="setEncoderFactory">
+                <argument type="service" id="security.encoder_factory"/>
+            </call>
+            <tag name="validator.constraint_validator" alias="encoder_factory_aware_old_password_validator"/>
+        </service>
+
+        <service id="user_auth_provider.confirm_password.validator" class="AppBundle\Validator\Entity\UserAuthProvider\ConfirmPasswordValidator">
+            <call method="setEncoderFactory">
+                <argument type="service" id="security.encoder_factory"/>
+            </call>
+            <tag name="validator.constraint_validator" alias="encoder_factory_aware_confirm_password_validator"/>
+        </service>
+
+        <service id="user_pre_save.event_listener" class="AppBundle\Event\Listener\UserPreSaveListener">
+            <tag name="kernel.event_listener" event="user.pre.save" method="onUserPreSave" />
+        </service>
+
+        <service id="user_failed_login_attempt.event_listener" class="AppBundle\Event\Listener\UserFailedLoginAttemptListener">
+            <tag name="kernel.event_listener" event="user.login_attempt.failed" method="onUserFailedLoginAttempt"/>
+            <call method="setCryptService">
+                <argument type="service" id="crypt.service"/>
+            </call>
+            <call method="setDoctrine">
+                <argument type="service" id="doctrine"/>
+            </call>
+        </service>
+
+        <service id="entity.service" class="AppBundle\Service\EntityService">
+            <call method="setDoctrine">
+                <argument type="service" id="doctrine"/>
+            </call>
+        </service>
+
+        <service id="crypt.service" class="AppBundle\Service\CryptService">
+            <call method="setSecret">
+                <argument>%kernel.secret%</argument>
+            </call>
+        </service>
+
+        <service id="flushed_entity_manager.service" class="AppBundle\Service\FlushedEntityManager">
+
+        </service>
+
+        <service id="cors.event_listener" class="AppBundle\Event\Listener\CorsListener">
+            <tag name="kernel.event_listener" event="kernel.response" method="onKernelResponse"/>
+        </service>
+
+    </services>
+</container>
+

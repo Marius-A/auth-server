@@ -1,19 +1,30 @@
-# This file is a "template" of what your parameters.yml file should look like
-# Set parameters here that may be different on each deployment target of the app, e.g. development, staging, production.
-# http://symfony.com/doc/current/best_practices/configuration.html#infrastructure-related-configuration
+# This file is auto-generated during the composer install
 parameters:
-    database_host:     127.0.0.1
-    database_port:     ~
-    database_name:     symfony
-    database_user:     root
-    database_password: ~
-    # You should uncomment this if you want use pdo_sqlite
-    # database_path: "%kernel.root_dir%/data.db3"
+    database_driver: pdo_mysql
+    database_host: 127.0.0.1
+    database_port: 3306
+    database_name: auth
+    database_user: dev
+    database_password: paroladev
 
-    mailer_transport:  smtp
-    mailer_host:       127.0.0.1
-    mailer_user:       ~
-    mailer_password:   ~
+    mailer_transport: smtp
+    mailer_host: 127.0.0.1
+    mailer_user: null
+    mailer_password: null
 
-    # A secret key that's used to generate certain security-related tokens
-    secret:            ThisTokenIsNotSoSecretChangeIt
+    locale: ro
+    secret: ThisTokenIsNotSoSecretChangeIt
+
+
+
+    memcached_servers:
+        -
+            host: 127.0.0.1
+            tcp_port: 11211
+
+    proxy_domains:
+        - auth.localhost
+
+    auth_base_url: http://auth.mariusiliescu.me
+    auth_client_id: 423423n4b23jh4v23jh4vj23v4j23v4j234j23b4jhv23gjv
+    auth_client_secret: bmn23b4mn23b4mn23bjv32k4h25ui23hrb32nb4234hjb23j4v
