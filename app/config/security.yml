@@ -1,17 +1,13 @@
 security:
     providers:
-        in_memory:
-            memory: ~ #todo
+        default:
+            id: security.user.provider
     encoders:
         bcrypt:
             algorithm:        bcrypt
             cost:             13
         main:
-            algorithm:        sha1
-            encode_as_base64: false
-            iterations:       1
-
-
+            id:               main.security.encoder
 
     firewalls:
         dev:

@@ -14,12 +14,12 @@
             </call>
         </service>
 
-        <service id="fos_oauth_server.storage.default" class="AppBundle\Service\OAuthStorageService" public="false">
-            <argument type="service" id="fos_oauth_server.client_manager" />
-            <argument type="service" id="fos_oauth_server.access_token_manager" />
-            <argument type="service" id="fos_oauth_server.refresh_token_manager" />
-            <argument type="service" id="fos_oauth_server.auth_code_manager" />
-            <argument type="service" id="app_bundle.security.user.provider" on-invalid="null" />
+        <service id="fos_oauth_server.storage" class="AppBundle\Service\OAuthStorageService" public="false">
+            <argument type="service" id="fos_oauth_server.client_manager.default" />
+            <argument type="service" id="fos_oauth_server.access_token_manager.default" />
+            <argument type="service" id="fos_oauth_server.refresh_token_manager.default" />
+            <argument type="service" id="fos_oauth_server.auth_code_manager.default" />
+            <argument type="service" id="security.user.provider" on-invalid="null" />
             <argument type="service" id="security.encoder_factory" />
 
             <call method="setKeyPairAdapter">
@@ -176,8 +176,7 @@
             </call>
         </service>
 
-        <service id="app_bundle.security.user.provider"
-                 class="AppBundle\Security\User\UserProvider">
+        <service id="security.user.provider" class="AppBundle\Security\User\UserProvider">
             <call method="setDoctrine">
                 <argument type="service" id="doctrine"/>
             </call>
@@ -185,7 +184,7 @@
 
         <service id="app_bundle.oauth.switch_user_grant_extension"
                 class="AppBundle\Security\GrantExtension\SwitchUserGrantExtension">
-            <argument type="service" id="app_bundle.security.user.provider"/>
+            <argument type="service" id="security.user.provider"/>
             <argument type="service" id="service_container"/>
             <tag name="fos_oauth_server.grant_extension" uri="qw"/>
         </service>
@@ -193,6 +192,7 @@
         <service id="fos_oauth_server.server" class="AppBundle\Server\OAuth2">
             <argument type="service" id="fos_oauth_server.storage" />
             <argument>%fos_oauth_server.server.options%</argument>
+
             <call method="setClientService">
                 <argument type="service" id="client.service"/>
             </call>

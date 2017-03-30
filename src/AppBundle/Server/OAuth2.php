@@ -32,9 +32,6 @@ class OAuth2 extends \OAuth2\OAuth2
     /** @var  UserService */
     protected $userService;
 
-    /** @var  AntiDogPileMemcache */
-    protected $memcache;
-
     /** @var bool */
     protected $scopeForcingMode = false;
 
@@ -81,14 +78,6 @@ class OAuth2 extends \OAuth2\OAuth2
     public function setUserService(UserService $userService)
     {
         $this->userService = $userService;
-    }
-
-    /**
-     * @param $memcache
-     */
-    public function setMemcache(AntiDogPileMemcache $memcache)
-    {
-        $this->memcache = $memcache;
     }
 
     /**
@@ -170,6 +159,7 @@ class OAuth2 extends \OAuth2\OAuth2
 
         /** @var Response $response */
         $response = parent::grantAccessToken($request);
+
         $response->setStatusCode(Response::HTTP_CREATED);
 
         return $response;
@@ -184,32 +174,25 @@ class OAuth2 extends \OAuth2\OAuth2
     {
         $accessToken = null;
 
-        # ACCESS TOKEN
-        if ($cache == true) {
-            $accessToken = $this->getTokenFromCache($client, $data, $scope);
-        }
-        if (empty($accessToken)) {
-            $scopeComputed = $scope;
-            if ($data instanceof User) {
-                $scopeComputed = $this->userService->getUserScopes($data, $scope);
-                $scopesArray = explode(" ", $scopeComputed);
 
-                if ($client instanceof Client && is_null($scopeComputed)) {
-                    foreach ($client->getRequiredRoles() as $requiredRole) {
-                        /** @var Role $requiredRole */
-                        $scopeRequired = RoleService::getScopeFromRole($requiredRole);
-                        if(!in_array($scopeRequired, $scopesArray)) {
-                            throw new OAuth2ServerException(self::HTTP_BAD_REQUEST, self::ERROR_UNAUTHORIZED_CLIENT, 'Unauthorized access. User does not have client required roles');
-                        }
+        $scopeComputed = $scope;
+        if ($data instanceof User) {
+            $scopeComputed = $this->userService->getUserScopes($data, $scope);
+            $scopesArray = explode(" ", $scopeComputed);
+
+            if ($client instanceof Client && is_null($scopeComputed)) {
+                foreach ($client->getRequiredRoles() as $requiredRole) {
+                    /** @var Role $requiredRole */
+                    $scopeRequired = RoleService::getScopeFromRole($requiredRole);
+                    if(!in_array($scopeRequired, $scopesArray)) {
+                        throw new OAuth2ServerException(self::HTTP_BAD_REQUEST, self::ERROR_UNAUTHORIZED_CLIENT, 'Unauthorized access. User does not have client required roles');
                     }
                 }
             }
-            $data = (is_null($data)) ? $client->getClientUser() : $data;
-            $accessToken = parent::createAccessToken($client, $data, $scopeComputed, $access_token_lifetime, $issue_refresh_token, $refresh_token_lifetime);
-            if ($cache == true) {
-                $this->setTokenInCache($client, $data, $scope, $accessToken);
-            }
         }
+        $data = (is_null($data)) ? $client->getClientUser() : $data;
+        $accessToken = parent::createAccessToken($client, $data, $scopeComputed, $access_token_lifetime, $issue_refresh_token, $refresh_token_lifetime);
+
 
 
         # JWT TOKEN
@@ -267,215 +250,6 @@ class OAuth2 extends \OAuth2\OAuth2
             new Jwt()
         );
         return $idToken->createIdToken($audience, $userInfo, null, $claims);
-    }
-
-    /**
-     * Get token cache key
-     *
-     * @param Client $client
-     * @param User $user
-     * @param $scopes
-     * @param string $index
-     * @return string
-     */
-    public function getTokenCacheKey(Client $client, User $user = null, $scopes, $index = "")
-    {
-        if (!empty($index)) {
-            $index = $index . ".";
-        }
-        return $index . $client->getId() . "." . (is_null($user) ? 'nu' : $user->getId()) . "." . md5($scopes);
-    }
-
-    /**
-     * @param Client $client
-     * @param User $user
-     * @param $scopes
-     * @return array|null|string
-     */
-    public function getTokenFromCache(Client $client, User $user = null, $scopes)
-    {
-        $index = $this->getTokenCacheIndex($client, $user);
-
-        if (empty($index)) {
-            return null;
-        }
-
-        $key = $this->getTokenCacheKey($client, $user, $scopes, $index);
-
-        $token = $this->memcache->get($key);
-        if (isset($token['expires_at'])) {
-            $token['expires_in'] = $token['expires_at'] - time();
-            unset($token['expires_at']);
-        }
-
-        return $token;
-    }
-
-    /**
-     * @param Client $client
-     * @param User $user
-     * @param $scopes
-     * @param $token
-     * @return bool|void
-     */
-    public function setTokenInCache(Client $client, User $user = null, $scopes, $token)
-    {
-        $index = $this->getTokenCacheIndex($client, $user);
-        if (empty($index)) {
-            $index = $this->createTokenCacheIndex($client, $user);
-        }
-
-        $key = $this->getTokenCacheKey($client, $user, $scopes, $index);
-
-        $token['expires_at'] = time() + $token['expires_in'];
-
-        return $this->memcache->set($key, $token, 0, $token['expires_in'] - self::TOKEN_CACHE_SECONDS_UNTIL_EXPIRE);
-    }
-
-    /**
-     * Create token cache index for user
-     *
-     * @param User $user
-     * @return null
-     */
-    protected function createTokenCacheIndex(Client $client, User $user = null)
-    {
-        $userIdx = $this->getUserTokenCacheIndex($user);
-        if (empty($userIdx) && !is_null($user)) {
-            $userIdx = $this->createUserTokenCacheIndex($user);
-        }
-        $clientIdx = $this->getClientTokenCacheIndex($client);
-        if (empty($clientIdx)) {
-            $clientIdx = $this->createClientTokenCacheIndex($client);
-        }
-        return $clientIdx . ($userIdx ? "." . $userIdx : "");
-    }
-
-    protected function createUserTokenCacheIndex(User $user)
-    {
-        $key = $this->getUserTokenCacheIndexKey($user);
-        $index = "utix." . $user->getId() . "." . uniqid("", true);
-        $set = $this->memcache->set($key, $index);
-        if ($set) {
-            return $index;
-        }
-        return null;
-    }
-
-    protected function createClientTokenCacheIndex(Client $client)
-    {
-        $key = $this->getClientTokenCacheIndexKey($client);
-        $index = "ctix." . $client->getId() . "." . uniqid("", true);
-        $set = $this->memcache->set($key, $index);
-        if ($set) {
-            return $index;
-        }
-        return null;
-    }
-
-    /**
-     * Get token cache index key
-     *
-     * @param User $user
-     * @return string
-     */
-    protected function getTokenCacheIndexKey(User $user)
-    {
-        return "token_index_key." . $user->getId();
-    }
-
-    /**
-     * @param Client $client
-     * @param User $user
-     *
-     * @return string
-     */
-    public function getTokenCacheIndex(Client $client, User $user = null)
-    {
-        $clientIdx = $this->getClientTokenCacheIndex($client);
-        $userIdx = $this->getUserTokenCacheIndex($user);
-
-        if (empty($clientIdx)) {
-            return null;
-        }
-
-        if (empty($userIdx) && !is_null($user)) {
-            return null;
-        }
-
-        return $clientIdx . (empty($userIdx) ? "" : "." . $userIdx);
-    }
-
-    /**
-     * Delete token cache index for user
-     *
-     * @param User $user
-     * @return bool|void
-     */
-    public function deleteUserTokenCacheIndex(User $user)
-    {
-        $key = $this->getUserTokenCacheIndexKey($user);
-
-        return $this->memcache->delete($key);
-    }
-
-    /**
-     * Delete token cache index for client
-     *
-     * @param Client $client
-     * @return bool|void
-     */
-    public function deleteClientTokenCacheIndex(Client $client)
-    {
-        $key = $this->getClientTokenCacheIndexKey($client);
-
-        return $this->memcache->delete($key);
-    }
-
-    /**
-     * @param Client $client
-     * @return string
-     */
-    public function getClientTokenCacheIndexKey(Client $client)
-    {
-        return "ctix_key." . $client->getId();
-    }
-
-    /**
-     * @param User $user
-     * @return string
-     */
-    public function getUserTokenCacheIndexKey(User $user)
-    {
-        return "utix_key." . $user->getId();
-    }
-
-    /**
-     * @param Client $client
-     *
-     * @return array|string|void
-     */
-    public function getClientTokenCacheIndex(Client $client)
-    {
-        $key = $this->getClientTokenCacheIndexKey($client);
-
-        return $this->memcache->get($key);
-    }
-
-    /**
-     * @param User $user
-     *
-     * @return array|string|void
-     */
-    public function getUserTokenCacheIndex(User $user = null)
-    {
-        if (is_null($user)) {
-            return null;
-        }
-
-        $key = $this->getUserTokenCacheIndexKey($user);
-
-        return $this->memcache->get($key);
     }
 }
 

@@ -24,7 +24,7 @@ use AppBundle\Validator\Entity\UserAuthProvider as UserAuthProviderAssert;
  */
 class UserAuthProvider
 {
-    const DEFAULT_PASSWORD_ENCODER = 'sha256';
+    const DEFAULT_PASSWORD_ENCODER = 'main';
 
     /**
      * @ORM\Id

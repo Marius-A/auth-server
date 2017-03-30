@@ -1,7 +1,17 @@
 services:
+
     gedmo.listener.timestampable:
         class: Gedmo\Timestampable\TimestampableListener
         tags:
             - { name: doctrine.event_subscriber, connection: auth }
         calls:
             - [ setAnnotationReader, [ '@annotation_reader' ] ]
+
+
+    # Doctrine Extension listeners to handle behaviors
+    gedmo.listener.tree:
+        class: Gedmo\Tree\TreeListener
+        tags:
+            - { name: doctrine.event_subscriber, connection: auth }
+        calls:
+            - [ setAnnotationReader, [ '@annotations.reader' ] ]

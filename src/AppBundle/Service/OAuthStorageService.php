@@ -50,13 +50,9 @@ class OAuthStorageService extends OAuthStorage
     {
         $data = null;
         try {
-            try {
-                $data = parent::checkUserCredentials($client, $username, $password);
-            } catch (UsernameNotFoundException $ex) {
-                // for this exception do nothing, user might be in LDAP
-            }
-        } catch (\Exception $ex) {
-            $data = false;
+            $data = parent::checkUserCredentials($client, $username, $password);
+        } catch (UsernameNotFoundException $ex) {
+           $data = false;
         }
 
         if ($data === false) {

@@ -36,12 +36,12 @@ twig:
     debug:            "%kernel.debug%"
     strict_variables: "%kernel.debug%"
 
-#assetic:
-#    debug:          "%kernel.debug%"
-#    use_controller: false
-#    bundles:        [ ]
-#    filters:
-#        cssrewrite: ~
+assetic:
+    debug:          "%kernel.debug%"
+    use_controller: false
+    bundles:        [ ]
+    filters:
+        cssrewrite: ~
 
 # Swiftmailer Configuration
 swiftmailer:
