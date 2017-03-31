@@ -30,7 +30,7 @@ abstract class RestController extends FOSRestController
         $security = $this->get("security.extra.metadata_factory");
         $metadata = $security->getMetadataForClass(ClassUtils::getRealClass($this));
 
-        $params = explode('::', $this->get('request')->attributes->get('_controller'));
+        $params = explode('::', $this->get('request_stack')->getCurrentRequest()->attributes->get('_controller'));
 
         #TOKEN ROLES
         $tokenRoles = RoleService::getRolesNames($this->container->get('security.token_storage')->getToken()->getRoles());

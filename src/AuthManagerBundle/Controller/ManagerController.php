@@ -2,6 +2,7 @@
 namespace AuthManagerBundle\Controller;
 
 
+use FOS\OAuthServerBundle\Model\Token;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\BadResponseException;
 use GuzzleHttp\Psr7\Request as GuzzleRequest;
